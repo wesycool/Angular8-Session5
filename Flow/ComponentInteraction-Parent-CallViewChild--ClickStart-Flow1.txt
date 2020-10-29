@@ -1,0 +1,114 @@
+
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\app.component.html
+<h1 id="top">Component Communication Cookbook</h1>
+
+<a href="#parent-to-child">Pass data from parent to child with input binding ("Heroes")</a><br/>
+<a href="#parent-to-child-setter">Intercept input property changes with a setter ("Master")</a><br/>
+<a href="#parent-to-child-on-changes">Intercept input property changes with <i>ngOnChanges</i> ("Source code version")</a><br/>
+<a href="#child-to-parent">Parent listens for child event ("Colonize Universe")</a><br/>
+<a href="#parent-to-child-local-var">Parent to child via <i>local variable</i>("Countdown to Liftoff")</a><br/>
+<a href="#parent-to-view-child">Parent calls <i>ViewChild</i>("Countdown  to Liftoff")</a><br/>
+<a href="#bidirectional-service">Parent and children communicate via a service ("Mission Control")</a><br/>
+
+<div id="parent-to-view-child">
+  <app-countdown-parent-vc></app-countdown-parent-vc>
+</div>
+<a href="#top" class="to-top">Back to Top</a>
+<hr>
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-parent.component.ts
+
+import { AfterViewInit, ViewChild } from '@angular/core';
+import { Component }                from '@angular/core';
+import { CountdownTimerComponent }  from './countdown-timer.component';
+
+
+//// Local variable, #timer, version
+@Component({
+  selector: 'app-countdown-parent-lv',
+  template: `
+  <h3>Countdown to Liftoff (via local variable)</h3>
+  <button (click)="timer.start()">Start</button>
+  <button (click)="timer.stop()">Stop</button>
+  <div class="seconds">{{timer.seconds}}</div>
+  <app-countdown-timer #timer></app-countdown-timer>
+  `,
+  styleUrls: ['../assets/demo.css']
+})
+export class CountdownLocalVarParentComponent { }
+
+//// View Child version
+@Component({
+  selector: 'app-countdown-parent-vc',
+  template: `
+  <h3>Countdown to Liftoff (via ViewChild)</h3>
+  <button (click)="start()">Start</button>
+  <button (click)="stop()">Stop</button>
+  <div class="seconds">{{ seconds() }}</div>
+  <app-countdown-timer></app-countdown-timer>
+  `,
+  styleUrls: ['../assets/demo.css']
+})
+export class CountdownViewChildParentComponent implements AfterViewInit {
+
+  /*
+  If you plan on accessing the selected element inside of ngOnInit() set static:true.
+  If you don't access the selected element in ngOnInit(but anywhere else in your component), set static: false instead.
+  */
+  @ViewChild(CountdownTimerComponent, {static: false}) //break
+  private timerComponent: CountdownTimerComponent;
+
+  seconds() { return 0; }
+
+  ngAfterViewInit() {
+    // Redefine `seconds()` to get from the `CountdownTimerComponent.seconds` ...
+    // but wait a tick first to avoid one-time devMode
+    // unidirectional-data-flow-violation error
+    setTimeout(() => this.seconds = () => this.timerComponent.seconds, 0);
+  }
+
+  start() { this.timerComponent.start(); }
+  stop() { this.timerComponent.stop(); }
+}
+
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-timer.component.ts
+import { Component, OnDestroy, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-countdown-timer',
+  template: '<p>{{message}}</p>'
+})
+export class CountdownTimerComponent implements OnInit, OnDestroy {
+
+  intervalId = 0;
+  message = '';
+  seconds = 11;
+
+  clearTimer() { clearInterval(this.intervalId); }
+
+  ngOnInit()    { this.start(); }
+  ngOnDestroy() { this.clearTimer(); }
+
+  start() { this.countDown(); } //break
+  stop()  {
+    this.clearTimer();
+    this.message = `Holding at T-${this.seconds} seconds`;
+  }
+
+  private countDown() {
+    this.clearTimer(); //break
+    this.intervalId = window.setInterval(() => {
+      this.seconds -= 1;
+      if (this.seconds === 0) {
+        this.message = 'Blast off!';
+      } else {
+        if (this.seconds < 0) { this.seconds = 10; } // reset
+        this.message = `T-${this.seconds} seconds and counting`;
+      }
+    }, 1000);
+  }
+}

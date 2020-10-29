@@ -1,0 +1,81 @@
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\astronaut.component.ts
+/*
+this.astronaut=Lovell
+
+*/
+export class AstronautComponent implements OnDestroy {
+  @Input() astronaut: string;
+  mission = '<no mission announced>';
+  confirmed = false;
+  announced = false;
+  subscription: Subscription;
+
+  constructor(private missionService: MissionService) {
+    this.subscription = missionService.missionAnnounced$.subscribe(
+      mission => {
+        this.mission = mission;
+        this.announced = true;
+        this.confirmed = false;
+    });
+  }
+
+  confirm() {
+    this.confirmed = true;//break
+    this.missionService.confirmMission(this.astronaut);//break
+  }
+
+  ngOnDestroy() {
+    // prevent memory leak when component destroyed
+    this.subscription.unsubscribe();
+  }
+}
+
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\mission.service.ts
+/*
+astronaut=Lovell
+
+*/
+import { Injectable } from '@angular/core';
+import { Subject }    from 'rxjs';
+
+@Injectable()
+export class MissionService {
+
+  // Observable string sources
+  private missionAnnouncedSource = new Subject<string>();
+  private missionConfirmedSource = new Subject<string>();
+
+  // Observable string streams
+  missionAnnounced$ = this.missionAnnouncedSource.asObservable();
+  missionConfirmed$ = this.missionConfirmedSource.asObservable();
+
+  // Service message commands
+  //Subject.next() method is used to send messages to an observable which are then
+  //sent to all angular components that are subscribers (a.k.a observers) of that
+  //observable.
+  announceMission(mission: string) {
+    this.missionAnnouncedSource.next(mission);
+  }
+
+  //Subject.next() method is used to send messages to an observable which are then
+  //sent to all angular components that are subscribers (a.k.a observers) of that
+  //observable.
+  confirmMission(astronaut: string) {
+    this.missionConfirmedSource.next(astronaut);//break
+  }
+}
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\missioncontrol.component.ts
+/*
+astronaut="Lovell"
+*/
+  constructor(private missionService: MissionService) {
+    missionService.missionConfirmed$.subscribe(
+      astronaut => {
+        this.history.push(`${astronaut} confirmed the mission`);
+      });
+  }

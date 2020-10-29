@@ -1,0 +1,67 @@
+
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\app.component.html
+<h1 id="top">Component Communication Cookbook</h1>
+
+<a href="#parent-to-child">Pass data from parent to child with input binding ("Heroes")</a><br/>
+<a href="#parent-to-child-setter">Intercept input property changes with a setter ("Master")</a><br/>
+<a href="#parent-to-child-on-changes">Intercept input property changes with <i>ngOnChanges</i> ("Source code version")</a><br/>
+<a href="#child-to-parent">Parent listens for child event ("Colonize Universe")</a><br/>
+<a href="#parent-to-child-local-var">Parent to child via <i>local variable</i>("Countdown to Liftoff")</a><br/>
+<a href="#parent-to-view-child">Parent calls <i>ViewChild</i>("Countdown  to Liftoff")</a><br/>
+<a href="#bidirectional-service">Parent and children communicate via a service ("Mission Control")</a><br/>
+
+<hr>
+<div id="child-to-parent">
+  <app-vote-taker></app-vote-taker>
+</div>
+<a href="#top" class="to-top">Back to Top</a>
+<hr>
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\votetaker.component.ts
+import { Component }      from '@angular/core';
+
+@Component({
+  selector: 'app-vote-taker',
+  template: `
+    <h2>Should mankind colonize the Universe?</h2>
+    <h3>Agree: {{agreed}}, Disagree: {{disagreed}}</h3>
+    <app-voter *ngFor="let voter of voters"
+      [name]="voter"
+      (voted)="onVoted($event)">
+    </app-voter>
+  `
+})
+export class VoteTakerComponent {
+  agreed = 0;
+  disagreed = 0;
+  voters = ['Narco', 'Celeritas', 'Bombasto'];
+
+  onVoted(agreed: boolean) {
+    agreed ? this.agreed++ : this.disagreed++;
+  }
+}
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\voter.component.ts
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-voter',
+  template: `
+    <h4>{{name}}</h4>
+    <button (click)="vote(true)"  [disabled]="didVote">Agree</button>
+    <button (click)="vote(false)" [disabled]="didVote">Disagree</button>
+  `
+})
+export class VoterComponent {
+  @Input()  name: string;
+  @Output() voted = new EventEmitter<boolean>();
+  didVote = false;
+
+  vote(agreed: boolean) {
+    this.voted.emit(agreed);
+    this.didVote = true;
+  }
+}

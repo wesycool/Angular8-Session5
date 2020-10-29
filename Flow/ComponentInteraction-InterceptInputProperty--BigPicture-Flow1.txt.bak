@@ -1,0 +1,53 @@
+
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\app.component.html
+<h1 id="top">Component Communication Cookbook</h1>
+
+<a href="#parent-to-child">Pass data from parent to child with input binding ("Heroes")</a><br/>
+<a href="#parent-to-child-setter">Intercept input property changes with a setter ("Master")</a><br/>
+<a href="#parent-to-child-on-changes">Intercept input property changes with <i>ngOnChanges</i> ("Source code version")</a><br/>
+<a href="#child-to-parent">Parent listens for child event ("Colonize Universe")</a><br/>
+<a href="#parent-to-child-local-var">Parent to child via <i>local variable</i>("Countdown to Liftoff")</a><br/>
+<a href="#parent-to-view-child">Parent calls <i>ViewChild</i>("Countdown  to Liftoff")</a><br/>
+<a href="#bidirectional-service">Parent and children communicate via a service ("Mission Control")</a><br/>
+
+<div id="parent-to-child-setter">
+  <app-name-parent></app-name-parent>
+</div>
+<a href="#top" class="to-top">Back to Top</a>
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\name-parent.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-name-parent',
+  template: `
+  <h2>Master controls {{names.length}} names</h2>
+  <app-name-child *ngFor="let name of names" [name]="name"></app-name-child>
+  `
+})
+export class NameParentComponent {
+  // Displays 'Dr IQ', '<no name set>', 'Bombasto'
+  names = ['Dr IQ', '   ', '  Bombasto  '];
+}
+
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\name-child.component.ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-name-child',
+  template: '<h3>"{{name}}"</h3>'
+})
+export class NameChildComponent {
+  private _name = '';
+
+  @Input()
+  set name(name: string) {
+    this._name = (name && name.trim()) || '<no name set>'; //break
+  }
+
+  get name(): string { return this._name; }
+}

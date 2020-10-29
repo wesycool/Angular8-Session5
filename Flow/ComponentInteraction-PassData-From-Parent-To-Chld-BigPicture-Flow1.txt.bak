@@ -1,0 +1,57 @@
+
+1.)
+C:\workspace-UT-Angular8-JAN-2020\Session5\component-interaction\src\app\app.component.html
+<h1 id="top">Component Communication Cookbook</h1>
+
+<a href="#parent-to-child">Pass data from parent to child with input binding ("Heroes")</a><br/>
+<a href="#parent-to-child-setter">Intercept input property changes with a setter ("Master")</a><br/>
+<a href="#parent-to-child-on-changes">Intercept input property changes with <i>ngOnChanges</i> ("Source code version")</a><br/>
+<a href="#child-to-parent">Parent listens for child event ("Colonize Universe")</a><br/>
+<a href="#parent-to-child-local-var">Parent to child via <i>local variable</i>("Countdown to Liftoff")</a><br/>
+<a href="#parent-to-view-child">Parent calls <i>ViewChild</i>("Countdown  to Liftoff")</a><br/>
+<a href="#bidirectional-service">Parent and children communicate via a service ("Mission Control")</a><br/>
+
+<div id="parent-to-child">
+  <app-hero-parent></app-hero-parent>
+</div>
+<a href="#top" class="to-top">Back to Top</a>
+
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\hero-parent.component.ts
+import { Component } from '@angular/core';
+
+import { HEROES } from './hero';
+
+@Component({
+  selector: 'app-hero-parent',
+  template: `
+    <h2>{{master}} controls {{heroes.length}} heroes</h2>
+    <app-hero-child *ngFor="let hero of heroes"
+      [hero]="hero"
+      [master]="master">
+    </app-hero-child>
+  `
+})
+export class HeroParentComponent {
+  heroes = HEROES;
+  master = 'Master';
+}
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\hero-child.component.ts
+import { Component, Input } from '@angular/core';
+
+import { Hero } from './hero';
+
+@Component({
+  selector: 'app-hero-child',
+  template: `
+    <h3>{{hero.name}} says:</h3>
+    <p>I, {{hero.name}}, am at your service, {{masterName}}.</p>
+  `
+})
+export class HeroChildComponent {
+  @Input() hero: Hero;
+  @Input('master') masterName: string;
+}

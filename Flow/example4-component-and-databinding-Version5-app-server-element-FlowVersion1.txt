@@ -1,0 +1,87 @@
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\example4-component-and-databinding-Version5\cmp-databinding-start\src\app\app.component.html
+<div class="container">
+  <!-- Begin cockpit-->
+  <app-cockpit (serverCreated)="onServerAdded($event)"
+  (blueprintCreated)="onBlueprintAdded($event)"
+  ></app-cockpit>
+  <!-- End cockpit-->
+  <hr>
+  <div class="row">
+    <div class="col-xs-12">
+      <!-- begin server element-->
+      <app-server-element *ngFor="let serverElement of serverElements"
+      [srvElement]="serverElement"></app-server-element>   //break
+       <!-- end server element-->
+    </div>
+  </div>
+</div>
+
+2.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\example4-component-and-databinding-Version5\cmp-databinding-start\src\app\app.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  serverElements = [{type: 'server', name: 'Testserver', content: 'Just a test!'}];//break
+
+
+  onServerAdded(serverData: {serverName: string, serverContent: string}) {
+
+    this.serverElements.push({
+      type: 'server',
+      name: serverData.serverName,
+      content: serverData.serverContent
+    });
+
+  }
+
+  onBlueprintAdded(blueprintData: {serverName: string, serverContent: string}) {
+    this.serverElements.push({
+       type: 'blueprint',
+       name: blueprintData.serverName,
+       content: blueprintData.serverContent
+    });
+  }
+}
+
+
+3.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\example4-component-and-databinding-Version5\cmp-databinding-start\src\app\server-element\server-element.component.ts
+import { Component, OnInit, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-server-element',
+  templateUrl: './server-element.component.html',
+  styleUrls: ['./server-element.component.css']
+})
+export class ServerElementComponent implements OnInit {
+  @Input('srvElement') element: {type: string, name: string, content: string}; //break
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}
+
+4.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\example4-component-and-databinding-Version5\cmp-databinding-start\src\app\server-element\server-element.component.html
+/*
+element.name=Test Server
+element.type=servers
+element.content='Just a test!'
+*/
+<div
+class="panel panel-default">
+<div class="panel-heading">{{ element.name }}</div> //break element.name=Test Server
+<div class="panel-body">
+  <p>
+    <strong *ngIf="element.type === 'server'" style="color: red">{{ element.content }}</strong> //break 
+    <em *ngIf="element.type === 'blueprint'">{{ element.content }}</em>
+  </p>
+</div>
+</div>

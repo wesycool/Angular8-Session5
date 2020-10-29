@@ -1,0 +1,60 @@
+
+1.)
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\app.component.html
+<a href="#parent-to-child-local-var">Parent to child via <i>local variable</i>("Countdown to Liftoff")</a><br/>
+
+<div id="parent-to-child-local-var">
+  <app-countdown-parent-lv></app-countdown-parent-lv>
+</div>
+<a href="#top" class="to-top">Back to Top</a>
+<hr>
+
+2.)
+parent component
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-parent.component.ts
+
+//// Local variable, #timer, version
+@Component({
+  selector: 'app-countdown-parent-lv',
+  template: `
+  <h3>Countdown to Liftoff (via local variable)</h3>
+  <button (click)="timer.start()">Start</button>
+  <button (click)="timer.stop()">Stop</button>
+  <div class="seconds">{{timer.seconds}}</div>
+  <app-countdown-timer #timer></app-countdown-timer>
+  `,
+  styleUrls: ['../assets/demo.css']
+})
+
+3.)
+child component
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-timer.component.ts
+@Component({
+  selector: 'app-countdown-timer',
+  template: '<p>{{message}}</p>'
+})
+export class CountdownTimerComponent implements OnInit, OnDestroy {
+
+4.)
+child component
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-timer.component.ts
+ start() {
+     this.countDown();//break
+     }
+
+5.)
+child component
+C:\workspace-UT-Angular7-Sept-2019\Session5\component-interaction\src\app\countdown-timer.component.ts
+private countDown() {
+    this.clearTimer();
+    this.intervalId = window.setInterval(() => {
+      this.seconds -= 1;
+      if (this.seconds === 0) {
+        this.message = 'Blast off!'; //break
+      } else {
+        if (this.seconds < 0) { this.seconds = 10; } // reset
+        this.message = `T-${this.seconds} seconds and counting`;
+      }
+    }, 1000);
+  }
+
