@@ -24,13 +24,15 @@ export class CountdownTimerComponent implements OnInit, OnDestroy {
   private countDown() {
     this.clearTimer();
     this.intervalId = window.setInterval(() => {
-      this.seconds -= 1;
-      if (this.seconds === 0) {
-        this.message = 'Blast off!';
-      } else {
-        if (this.seconds < 0) { this.seconds = 10; } // reset
-        this.message = `T-${this.seconds} seconds and counting`;
-      }
+      (this.seconds === 0)? this.seconds = 10 : this.seconds --
+      this.message = (this.seconds === 0)? 'Blast off!' : `T-${this.seconds} seconds and counting`
+      // this.seconds -= 1;
+      // if (this.seconds === 0) {
+      //   this.message = 'Blast off!';
+      // } else {
+      //   if (this.seconds < 0) { this.seconds = 10; } // reset
+      //   this.message = `T-${this.seconds} seconds and counting`;
+      // }
     }, 1000);
   }
 }
